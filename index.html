@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    body {
+      background-color: rgb(223, 223, 212); 
+    }
+
+    .container {
+      max-width: 380px;
+      margin: 100px auto;
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      height: 500px;
+      overflow: hidden;  
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      font-size: 20px;
+    }
+
+    .textInput {
+      margin: 12px 0px 32px 0px;
+      height: 28px;
+      padding: 0px 8px;
+      border-radius: 6px;
+    }
+
+    .submitInput {
+      background-color: #82f;
+      color: aliceblue;
+      border: none;
+      border-radius: 100px;
+      height: 40px;
+      font-size: 16px;
+      transition: 300ms;
+    }
+
+    .submitInput:hover {
+      background-color: rgb(91, 21, 156);
+      height: 72px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Você realmente é fã de Linkin park?</h1>
+
+    <form class="form">
+      <label for="quantidadeDeAlbuns">Quantos álbuns tem Linkin Park?</label>
+      <input type="text" class="textInput" id="quantidadeDeAlbuns" name="quantidadeDeAlbuns">
+
+      <label for="impactoMusica">Qual a música com maior impacto social?</label>
+      <input type="text" class="textInput" id="impactoMusica" name="impactoMusica">
+
+      <label for="estiloMusical">Qual o estilo musical da banda?</label>
+      <input type="text" class="textInput" id="estiloMusical" name="estiloMusical">
+
+      <input type="submit" value="Conferir respostas" class="submitInput">
+    </form>
+  </div>
+
+</body>
+</html>
+
