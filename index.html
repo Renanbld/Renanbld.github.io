@@ -1,74 +1,361 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gerenciador de Álbuns</title>
 
-  <style>
-    body {
-      background-color: rgb(223, 223, 212); 
-    }
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 40px;
+        min-height: 100vh;
+        background: linear-gradient(
+          270deg,
+          #f0f0f0,
+          #888
+        );
+        background-size: 1000% 1000%;
+        animation: gradientBG 20s ease infinite;
+      }
 
-    .container {
-      max-width: 380px;
-      margin: 100px auto;
-      background: white;
-      border-radius: 14px;
-      padding: 20px;
-      height: 500px;
-      overflow: hidden;  
-    }
 
-    .form {
-      display: flex;
-      flex-direction: column;
-      font-size: 20px;
-    }
+      @keyframes gradientBG {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
 
-    .textInput {
-      margin: 12px 0px 32px 0px;
-      height: 28px;
-      padding: 0px 8px;
-      border-radius: 6px;
-    }
+      .container {
+        max-width: 1100px;
+        margin: auto;
+        display: flex;
+        gap: 40px;
+      }
 
-    .submitInput {
-      background-color: #82f;
-      color: aliceblue;
-      border: none;
-      border-radius: 100px;
-      height: 40px;
-      font-size: 16px;
-      transition: 300ms;
-    }
+      .card {
+        background: #fff;
+        padding: 60px 40px 40px 40px;
+        border-radius: 8px;
+        width: 50%;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;          
+      }
 
-    .submitInput:hover {
-      background-color: rgb(91, 21, 156);
-      height: 72px;
-    }
+      .card:hover {
+        transform: scale(1.03); 
+        box-shadow: 0 15px 30px rgba(0,0,0,0.2); 
+      }
+      
+      .card.editando {
+        border: 2px solid orange;
+      }
 
-  </style>
-</head>
+      .album-item {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        cursor: pointer;
+      }
 
-<body>
-  <div class="container">
-    <h1>Você realmente é fã de Linkin park?</h1>
+      .album-item:hover {
+        background: #f0f0f0;
+      }
 
-    <form class="form">
-      <label for="quantidadeDeAlbuns">Quantos álbuns tem Linkin Park?</label>
-      <input type="text" class="textInput" id="quantidadeDeAlbuns" name="quantidadeDeAlbuns">
+      .album-item.ativo {
+        background: #e0e0e0;
+      }
 
-      <label for="impactoMusica">Qual a música com maior impacto social?</label>
-      <input type="text" class="textInput" id="impactoMusica" name="impactoMusica">
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        color: #000;
+      }
 
-      <label for="estiloMusical">Qual o estilo musical da banda?</label>
-      <input type="text" class="textInput" id="estiloMusical" name="estiloMusical">
+      .formularioDeCadastro {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
 
-      <input type="submit" value="Conferir respostas" class="submitInput">
-    </form>
-  </div>
+      .inputComLabel {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .inputComLabel label {
+        font-size: 14px;
+      }
+      .inputComLabel input, textarea {
+        border: 1px solid rgba(0, 0, 0, 0.15);
+      }
 
-</body>
+      /* Aqui estiliza TODOS os componentes button da aplicação */
+      button {
+        padding: 10px 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        max-height: 40px;
+      }
+
+      /* Aqui estiliza só quem tem class="btn" */
+      .btn {
+        background: #000;
+        color: #fff;
+      }
+
+      .btn-danger {
+        background: red;
+        color: #fff;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .acoes {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      #modoEdicao {
+        color: orange;
+        margin-bottom: 10px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+     
+      <div class="card" id="formCard">
+        <h2>Cadastro de Álbum sobre Linkin Park</h2>
+
+        <p id="modoEdicao">✏️ Editando álbum</p>
+
+        <div class="formularioDeCadastro">
+          <div class="inputComLabel">
+            <label for="nomeDoAlbum"> Nome do álbum</label>
+            <input id="album" name="nomeDoAlbum" placeholder="Meteora" />
+          </div>
+
+          <div class="inputComLabel">
+            <label for="duracao"> Duração (min)</label>
+            <input id="duracao" name="duracao" placeholder="60 min" />
+          </div>
+
+          <div class="inputComLabel">
+            <label for="data"> Data de lançamento </label>
+            <input id="data" type="date" name="data" />
+          </div>
+          
+          <div class="inputComLabel">
+            <label for="musicaPreferida">Música preferida</label>
+            <input id="musicaPreferida" name="musicaPreferida" placeholder="Somewhere i belong" />
+          </div>
+          
+          <div class="inputComLabel">
+            <label for="impactoSocial">Impacto Social</label>
+            <textarea id="impactoSocial" name="impactoSocial" placeholder="Impacto social"></textarea>
+          </div>
+
+          
+
+        </div>
+        
+
+        <div class="acoes">
+          <button class="btn" id="btnSalvar" onclick="salvar()">Salvar</button>
+          <input type="file" accept=".csv" onchange="importarCSV(event)" />
+        </div>
+      </div>
+
+      
+      <div class="card hidden" id="visualizacao">
+        <h2>Álbuns cadastrados</h2>
+        <div id="listaAlbuns"></div>
+
+        <hr />
+        <br />
+
+        <div id="detalhesAlbum" class="hidden">
+          <h3 id="tituloAlbum"></h3>
+          <p><strong>Lançamento:</strong> <span id="dataAlbum"></span></p>
+          <p><strong>Duração:</strong> <span id="duracaoAlbum"></span> min</p>
+          <p>
+            <strong>Música preferida:</strong> <span id="musicaAlbum"></span>
+          </p>
+          <p><strong>Impacto social:</strong></p>
+          <p id="impactoAlbum"></p>
+
+          <div class="actions">
+            <button class="btn" onclick="editar()">Editar</button>
+            <button class="btn-danger" onclick="excluir()">Excluir</button>
+            <button class="btn" onclick="exportarCSV()">Baixar CSV</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let albums = [];
+      let albumSelecionadoId = null;
+      let editandoId = null;
+
+      function salvar() {
+        const album = { //editandoId consta contem o id do album que vc estiver editando
+          id: editandoId ?? Date.now(), //date.now cria um id unico pra cada album novo
+          nome: albumInput.value,
+          duracao: duracao.value,
+          data: data.value,    // vai pegar o valor posto no card 1 e salvar no card 2
+          musica: musica.value,
+          impacto: impacto.value,
+        };
+
+        if (editandoId) { // atualiza um album ja existente
+          albums = albums.map((a) => (a.id === editandoId ? album : a));
+        } else { // cria um album novo
+          albums.push(album); // add album novo no array
+        }
+
+        limparFormulario(); 
+        limparModoEdicao(); 
+        renderizarLista(); // atualiza a lista de albuns no card 2
+        mostrarTela2(); // mostra o card 2 na tela
+      }
+
+      function renderizarLista() { // mostrar a lista de albuns no card 2
+        listaAlbuns.innerHTML = ""; // limpa tudo do container, pra nao duplicar os itens 
+        albums.forEach((album) => {
+          const div = document.createElement("div");
+          div.className = "album-item";
+          div.dataset.id = album.id; // identificar qual álbum o usuário clicou mais tarde para edição ou exclusão
+          div.innerText = album.nome;
+          div.onclick = () => selecionarAlbum(album.id); // deixa os albuns clicaveis
+          listaAlbuns.appendChild(div);
+        });
+      }
+
+      function selecionarAlbum(id) {
+        albumSelecionadoId = id;
+
+        document.querySelectorAll(".album-item").forEach((el) => { // faz aparecer as infos de cada album
+          el.classList.toggle("ativo", el.dataset.id == id);
+        });
+
+        const album = albums.find((a) => a.id === id);
+        if (!album) return;
+
+        detalhesAlbum.classList.remove("hidden");
+        tituloAlbum.innerText = album.nome;
+        dataAlbum.innerText = album.data;
+        duracaoAlbum.innerText = album.duracao;
+        musicaAlbum.innerText = album.musica;
+        impactoAlbum.innerText = album.impacto;
+      }
+
+      function editar() {
+        const album = albums.find((a) => a.id === albumSelecionadoId);
+        if (!album) return;
+
+        editandoId = album.id;
+
+        albumInput.value = album.nome;
+        duracao.value = album.duracao;
+        data.value = album.data;
+        musica.value = album.musica;
+        impacto.value = album.impacto;
+
+        modoEdicao.style.display = "block";
+        btnSalvar.innerText = "Atualizar"; // Altera o texto de "salvar" p/ "atualizar" quando a função editar() é executada.
+        formCard.classList.add("editando");
+      }
+
+      function excluir() {
+        albums = albums.filter((a) => a.id !== albumSelecionadoId);
+        detalhesAlbum.classList.add("hidden");
+        albumSelecionadoId = null;
+        renderizarLista();
+      }
+
+      function exportarCSV() {
+        let csv =
+          "album,duracao,data,musicaPreferida,impactoSocial\n";
+        albums.forEach((a) => {
+          csv += `${a.nome},${a.duracao},${a.data},${a.musica},${a.impacto}\n`;
+        });
+
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "albuns.csv";
+        a.click();
+      }
+
+      function importarCSV(event) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const linhas = e.target.result.split("\n");
+          linhas.slice(1).forEach((l) => {
+            if (!l.trim()) return;
+            const d = l.split(",");
+            albums.push({
+              id: Date.now() + Math.random(),
+              nome: d[0],
+              duracao: d[1],
+              data: d[2],
+              musica: d[3],
+              impacto: d[4],
+            });
+          });
+          renderizarLista();
+          mostrarTela2();
+        };
+        reader.readAsText(event.target.files[0]);
+      }
+
+      function limparFormulario() {
+        albumInput.value =
+          duracao.value =
+          data.value =
+          musica.value =
+          impacto.value =
+            "";
+      }
+
+      function limparModoEdicao() {
+        editandoId = null;
+        modoEdicao.style.display = "none";
+        btnSalvar.innerText = "Salvar";
+        formCard.classList.remove("editando");
+      }
+
+      function mostrarTela2() {
+        visualizacao.classList.remove("hidden");
+      }
+
+      const albumInput = document.getElementById("album");
+      const duracao = document.getElementById("duracao");
+      const data = document.getElementById("data");
+      const musica = document.getElementById("musicaPreferida");
+      const impacto = document.getElementById("impactoSocial");
+
+      const listaAlbuns = document.getElementById("listaAlbuns");
+      const detalhesAlbum = document.getElementById("detalhesAlbum");
+    </script>
+
+
+
+  </body>
 </html>
-
